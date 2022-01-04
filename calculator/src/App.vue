@@ -2,7 +2,7 @@
 
     <div id="app">
 
-        <h1>Calculadora</h1>
+        <h1>Calculadora do Erik</h1>
         
         <Calculator />
 
@@ -16,6 +16,7 @@ import Calculator from "./main/Calculator.vue"
 
 export default {
 
+    name: 'App',
     components: { Calculator }
 
 }
@@ -24,35 +25,23 @@ export default {
 
 <style>
 
-    @font-face{
-
-        font-family: "RobotoMono";
-        src: url( "./fonts/RobotoMono-Thin.ttf" );
-
-    }
-
     * {
-        
-        font-family: "RobotoMono", monospace;
 
+        background-image: linear-gradient( rgb(7, 63, 40), rgb( 0, 0, 0 ) )
+        
+    }
+    
+    h1 {
+
+        text-align: center;
+        color: yellow;
+        font-family: "Super Mario 256", sans-serif;
     }
 
     body {
 
-        margin: 0;
+        background: #31475e !important;
 
-    }
-
-    #app {
-
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        justify-content: center;
-        align-content: center;
-        text-align: center;
-        color: #fff;
-        background: linear-gradient( to right, rgb(73, 1, 12), rgb(45, 10, 46) )
     }
 
 </style>

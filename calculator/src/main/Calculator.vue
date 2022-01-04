@@ -1,133 +1,104 @@
 <template>
 
-    <div class="calculator">
+    <div class="p-3" style="max-width: 400px; margin: 50px auto; background: #234">
 
-        <Display :value="displayValue" />
+        <!-- Resultado da Calculadora -->
+        <div class="w-full rounded m-1 p-3 text-right lead font-weight bold text-white bg-vue-dark">
 
-        <Button label="AC" triple @onClick="clearMemory" />
-        <Button label="/" operation @onClick="setOperation" />
-        <Button label="7" @onClick="addDigit" />
-        <Button label="8" @onClick="addDigit" />
-        <Button label="9" @onClick="addDigit" />
-        <Button label="*" operation @onClick="setOperation" />
-        <Button label="4" @onClick="addDigit" />
-        <Button label="5" @onClick="addDigit" />
-        <Button label="6" @onClick="addDigit" />
-        <Button label="-" operation @onClick="setOperation" />
-        <Button label="1" @onClick="addDigit" />
-        <Button label="2" @onClick="addDigit" />
-        <Button label="3" @onClick="addDigit" />
-        <Button label="+" operation @onClick="setOperation" />
-        <Button label="0" double @onClick="addDigit" />
-        <Button label="." @onClick="addDigit" />
-        <Button label="=" operation @onClick="setOperation" />
-        
+            {{ calculatorValue || 0 }}
+
+        </div>
+
+        <!-- Botões da Calculadora -->
+        <!-- Fileira -->
+        <div class="row no-gutters">
+
+            <!-- Coluna -->
+            <div class="col-3" v-for="n in calculatorElements" :key="n">
+
+                <div class="lead text-white text-center m-1 py-3 bg-vue-dark rounded hover-class"
+                
+                    :class="{ 'bg-vue-green': [ 'C', '*', '/', '-', '+', '%', '='].includes( n ) }"
+                    @click="action(n)">
+
+                    {{ n }}
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </template>
 
 <script>
 
-import Display from "../components/Display.vue"
-import Button from "../components/Button.vue"
-
 export default {
 
-    data: function() {
+    name: 'Calculator',
+    props: { msg: String },
+
+    data() {
 
         return {
 
-            displayValue: "0",
-            clearDisplay: false,
-            operation: null,
-            value: [ 0, 0 ],
-            current: 0
+            calculatorValue: '',
+            calculatorElements: [ 'C', '*', '/', '-', 7, 8, 9, '+', 4, 5, 6, '%', 1, 2, 3, '=', 0, '.'],
+            operator: null,
+            previousCalculatorValue: '',
 
         }
 
     },
 
-    components: { Button, Display },
     methods: {
 
-        clearMemory() {
+        action( n ) {
+            /* Acrescenta um valor */
+            if( !isNaN( n ) || n === '.' ) {
 
-            Object.assign( this.$data, this.$options.data() )
-
-        },
-
-        setOperation( operation ) {
-
-            if ( this.current === 0 ) {
-
-                this.operation = operation
-
-                this.current = 1
-
-                this.clearDisplay = true
-
-            } else {
-
-                const equals = operation === "="
-
-                const currentOperation = this.operation
-
-                try {
-
-                    this.value[ 0 ] = eval (
-
-                        `${ this.value[ 0 ] } ${ currentOperation } ${ this.value[ 1 ] }`
-                    )
-                } catch ( e ) {
-
-                    this.$emit( 'onError', e )
-
-                }
-
-                this.value[ 1 ] = 0
-
-                this.displayValue = this.value[ 0 ]
-
-                this.operation = equals ? null : operation
-
-                this.current = equals ? 0 : 1
-
-                this.clearDisplay = !equals
+                this.calculatorValue += n + '';
 
             }
 
-        },
+            /* Limpa valor */
+            if ( n === 'C' ) {
 
-        addDigit( n ) {
-
-            if ( n === "." && this.displayValue.includes( "." ) ) {
-
-                return
+                this.calculatorValue = '';
 
             }
 
-            const clearDisplay = this.clearDisplay === "0"
-                || this.clearDisplay
+            /* Porcentagem */
+            if ( n === '%') {
 
-            const currentValue = clearDisplay ? "" : this.displayValue
-            
-            const displayValue = currentValue + n
+                this.calculatorValue = this.calculatorValue / 100 + '';
 
-            this.displayValue = displayValue
+            }
 
-            this.clearDisplay = false
+            /* Operadores */
+            if ( [ '/', '*', '-', '+' ].includes( n ) ) {
 
-            // Alternativa 1
-            this.value[ this.current ] = displayValue
+                this.operator = n;
+                this.previousCalculatorValue = this.calculatorValue;
+                this.calculatorValue = '';
 
-            // Alternativa 2
-            // if ( n !== "." ) {
+            }
 
-            //     const i = this.current
-            //     const newValue = parseFloat( displayValue )
-            //     this.values[ i ] = newValue
+            /* Calcula o resultado usando a função eval */
+            if ( n === '=' ) {
 
-            // }
+                this.calculatorValue = eval(
+
+                    this.previousCalculatorValue + this.operator + this.calculatorValue
+
+                );
+
+                this.previousCalculatorValue = '',
+                this.operator = null;
+
+            }
 
         }
 
@@ -137,18 +108,38 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
-    .calculator {
+    .bg-vue-dark {
 
-        height: 320px;
-        width: 235px;;
-        border-radius: 5px;
-        overflow: hidden;
+        background: #31475e;
 
-        display: grid;
-        grid-template-columns: repeat(4, 25%);
-        grid-template-rows: 1fr 48px 48px 48px 48px;
+    }
+
+    .hover-class:hover {
+
+        cursor: pointer;
+        background: #3D5875;
+
+    }
+
+    .bg-vue-green {
+
+        background: #3fb984;
+    }
+
+    div.p-3 {
+
+        background: black;
+        border: 2px solid white;
+
+    }
+
+    div.col-3 {
+
+        background: black;
+        border: 2px solid white;
+
     }
 
 </style>
